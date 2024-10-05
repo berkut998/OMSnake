@@ -366,7 +366,8 @@ CMakeUserPresets.json
 
 #output/build dir
 out/
-
-
+build/
+Dependency/SFML-2.6.1/lib/cmake/
 .vscode/
 CMakePresets.json
+
