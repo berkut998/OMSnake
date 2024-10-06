@@ -1,6 +1,6 @@
 #pragma once
 #include "AppleMaker.hpp"
-#include "Player.hpp"
+#include "Snake.hpp"
 #include "IGameObject.hpp"
 #include <iostream>
 class GameSuperviser
@@ -11,7 +11,7 @@ private:
     sf::RenderWindow *mainWindow;
     bool appleExist = false;
     Apple* currApple = nullptr;
-    Player* p = nullptr;
+    Snake* snake = nullptr;
     int idCounter = 0;
 
     bool checkIfAppleCanBeAte();
@@ -40,10 +40,10 @@ GameSuperviser::~GameSuperviser()
 
 void GameSuperviser::startGame()
 {
-    p = new Player();
-    p->id=idCounter;
+    snake = new Snake();
+    snake->id=idCounter;
     idCounter++;
-    allGameObjects.push_back(p);
+    allGameObjects.push_back(snake);
 }
 
 
@@ -63,9 +63,9 @@ void GameSuperviser::createAppleIfNotExist()
 
 bool GameSuperviser::checkIfAppleCanBeAte()
 {
-    if (p != nullptr && currApple != nullptr)
+    if (snake != nullptr && currApple != nullptr)
     {
-        sf::FloatRect playerRect = p->getObjectBond();
+        sf::FloatRect playerRect = snake->getObjectBond();
         sf::FloatRect appleRect = currApple->getObjectBond();
         if (playerRect.intersects(appleRect))
             return true;
@@ -84,6 +84,7 @@ void GameSuperviser::eatApple()
             delete currApple;
             currApple = nullptr;
             appleExist = false;
+            snake->grow();
             break;
         }        
 }

@@ -2,12 +2,10 @@
 #include "Dependency/SFML-2.6.1/include/SFML/Graphics.hpp"
 #include "IGameObject.hpp"
 
-class Player:public IGameObject
+class Control
 {
-private:
-    /* data */
-    sf::RectangleShape currShape = sf::RectangleShape(sf::Vector2f(25, 25));
-    enum class  Movement
+public:
+    enum class Movement
     {
         None,
         Up,
@@ -15,40 +13,27 @@ private:
         Left,
         Right
     };
+    Control(sf::Shape *shape);
+    ~Control();
+    void move();
+    void handleEvent(sf::Event *event);
+    sf::FloatRect getObjectBond();
+    Movement getCurentDirection();
+    float speed = 1;
+    // float acceleration  =1;
+    float maxSpeed = 30;
 
+private:
+    /* data */
+    sf::Shape *currShape;
     Movement currMoveTo = Movement::None;
     void changeMovement(sf::Event *event);
-    void move();
-    
-public:
-    Player(/* args */);
-    ~Player();
-
-    void handleEvent(sf::Event *event) override;
-    void draw(sf::RenderWindow *window) override;
-    sf::FloatRect getObjectBond();
-    float speed = 1;
-    //float acceleration  =1;
-    float maxSpeed = 30;
 };
 
-void Player::handleEvent(sf::Event *event)
-{
+void Control::handleEvent(sf::Event *event){
     changeMovement(event);
 }
-
-sf::FloatRect Player::getObjectBond()
-{
-    return currShape.getGlobalBounds();
-}
-
-void Player::draw(sf::RenderWindow *window)
-{
-    move();
-    window->draw(currShape);
-}
-
-void Player::move()
+void Control::move()
 {
     // if (maxSpeed < speed);
     //     speed +=acceleration;
@@ -62,10 +47,10 @@ void Player::move()
         y -= 1.f;
     else if (currMoveTo == Movement::Down)
         y += 1.f;
-    currShape.move(x * speed, y * speed);
+    currShape->move(x * speed, y * speed);
 }
 
-void Player::changeMovement(sf::Event *event)
+void Control::changeMovement(sf::Event *event)
 {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
         currMoveTo = Movement::Left;
@@ -77,11 +62,16 @@ void Player::changeMovement(sf::Event *event)
         currMoveTo = Movement::Down;
 }
 
-Player::Player(/* args */)
+Control::Movement Control::getCurentDirection()
 {
-
+    return currMoveTo;
 }
 
-Player::~Player()
+Control::Control(sf::Shape* shape)
+{
+    currShape = shape;
+}
+
+Control::~Control()
 {
 }
