@@ -1,7 +1,7 @@
 #pragma once
 #include "Dependency/SFML-2.6.1/include/SFML/Graphics.hpp"
 #include "IGameObject.hpp"
-
+#include <iostream> //remove after debug
 class Control
 {
 public:
@@ -19,9 +19,9 @@ public:
     void handleEvent(sf::Event *event);
     sf::FloatRect getObjectBond();
     Movement getCurentDirection();
-    float speed = 1;
+    float speed = 2;
     // float acceleration  =1;
-    float maxSpeed = 30;
+    float maxSpeed = 60;
 
 private:
     /* data */
@@ -60,6 +60,8 @@ void Control::changeMovement(sf::Event *event)
         currMoveTo = Movement::Up;
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
         currMoveTo = Movement::Down;
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+        currMoveTo = Movement::None;
 }
 
 Control::Movement Control::getCurentDirection()

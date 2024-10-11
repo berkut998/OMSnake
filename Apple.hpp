@@ -7,16 +7,16 @@ private:
     /* data */
     sf::CircleShape currShape;
 public:
-    Apple(sf::Vector2f coord);
+    Apple(sf::Vector2f coord, float radius, std::size_t countPoint);
     void draw(sf::RenderWindow *window) override;
     void handleEvent(sf::Event *event) override; 
     sf::FloatRect getObjectBond();
     ~Apple();
 };
 
-Apple::Apple(sf::Vector2f coord)
+Apple::Apple(sf::Vector2f coord, float radius, std::size_t countPoint)
 {
-    currShape = sf::CircleShape(10.f, 10.f);
+    currShape = sf::CircleShape(radius, countPoint);
     currShape.move(coord);
     currShape.setFillColor(sf::Color(255,0,0,255));
 }
