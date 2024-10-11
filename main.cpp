@@ -22,6 +22,8 @@ int main()
         window.clear();
         game.drawAllGameObjects();
         window.display();
+        
+        game.drawAllGameObjects();
     }
     return 0;
 }
