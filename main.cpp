@@ -4,7 +4,8 @@
 int main()
 {
     
-    sf::RenderWindow window(sf::VideoMode(200, 200), "OMSnake");
+    sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "OMSnake");
+
     window.setFramerateLimit(60);
     GameSuperviser game = GameSuperviser(&window);
     game.startGame();
@@ -22,8 +23,6 @@ int main()
         window.clear();
         game.drawAllGameObjects();
         window.display();
-        
-        game.drawAllGameObjects();
     }
     return 0;
 }

@@ -24,13 +24,14 @@ private:
     const int growSize = 3;
     SnakeBody head;
     std::vector<SnakeBody> tail;
+    const sf::Vector2f snakeSize = sf::Vector2f(15,15);
     void moveTailToHead();
 };
 
     Snake::Snake()
     {
         head = SnakeBody();
-        head.shape = sf::RectangleShape(sf::Vector2f(5,5));
+        head.shape = sf::RectangleShape(snakeSize);
         head.shape.setFillColor(sf::Color(255,255,255,255));
         control = new Control(&head.shape);
     }
@@ -88,7 +89,7 @@ private:
                 lastTailElement = head;
             else
                 lastTailElement = tail.back();
-            partOfTail.shape = sf::RectangleShape(sf::Vector2f(5, 5));
+            partOfTail.shape = sf::RectangleShape(snakeSize);
             partOfTail.shape.setFillColor(sf::Color(255, 0, 0, 255));
             partOfTail.currMove = control->getCurentDirection();
             partOfTail.shape.setPosition(-100,-100);//remove from view;

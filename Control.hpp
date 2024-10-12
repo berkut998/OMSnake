@@ -19,9 +19,9 @@ public:
     void handleEvent(sf::Event *event);
     sf::FloatRect getObjectBond();
     Movement getCurentDirection();
-    float speed = 2;
+    float speed = 6;
     // float acceleration  =1;
-    float maxSpeed = 60;
+    float maxSpeed = 180;
 
 private:
     /* data */
