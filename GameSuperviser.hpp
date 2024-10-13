@@ -35,7 +35,6 @@ private:
     void createAppleIfNotExist();
     void eatApple();
     bool checkTailCanBeAte();
-    void gameOver();
     void drawGameOverScreen();
     void drawScore();
     void setUpTextVariable();
@@ -61,7 +60,7 @@ GameSuperviser::GameSuperviser(sf::RenderWindow *window)
 
 void GameSuperviser::calculateMinMaxFieldPos()
 {
-    sf::Vector2u windowSize = mainWindow->getSize();
+    sf::Vector2f windowSize = mainWindow->getDefaultView().getSize();
     windowSize.x-borderMargin*2-borderSize;
     maxFieldPos = sf::Vector2f(windowSize.x-borderMargin*2-borderSize,
     windowSize.y-borderMargin*2-borderSize);
@@ -77,7 +76,7 @@ void GameSuperviser::createRestartButton()
 {
     btnRestart = new Button(mainWindow,font,"Restart");
     btnRestart->id = idCounter;
-    sf::Vector2u windowSize = mainWindow->getSize();
+    sf::Vector2f windowSize = mainWindow->getDefaultView().getSize();
     sf::Vector2f btnSize = btnRestart->getSize();
     sf::Vector2f btnPos = sf::Vector2f{windowSize.x/2-btnSize.x/2,windowSize.y/2-btnSize.y/2};
     //std::function<void()> onClickRestart = std::bind(&GameSuperviser::restartGame,this);
@@ -103,7 +102,7 @@ void GameSuperviser::setUpTextVariable()
         textScore.setFillColor(sf::Color::White);
         textScore.setStyle(sf::Text::Bold);
        
-        sf::Vector2u windowSize =  mainWindow->getSize();
+        sf::Vector2f windowSize = mainWindow->getDefaultView().getSize();
         float textWidth = textScore.getLocalBounds().width;
         float textHeight = textScore.getLocalBounds().height;
         sf::Vector2f scoreTextPos = sf::Vector2f(windowSize.x/2-textWidth/2,10);
@@ -158,9 +157,10 @@ void GameSuperviser::drawAllGameObjects()
 
 void GameSuperviser::drawGameOverScreen()
 {
-    sf::Vector2u windowSize =  mainWindow->getSize();
+    sf::Vector2f windowSize = mainWindow->getDefaultView().getSize();
     float textWidth = textGameOver.getLocalBounds().width;
     float textHeight = textGameOver.getLocalBounds().height;
+    
     sf::Vector2f gameOverTextPos = sf::Vector2f(windowSize.x/2-textWidth/2, windowSize.y/2-textHeight/2);
     textGameOver.setPosition(gameOverTextPos);
     sf::Vector2f btnRestartPos = gameOverTextPos;
@@ -234,7 +234,7 @@ void GameSuperviser::eatApple()
 
 void GameSuperviser::createAppleIfNotExist()
 {
-    sf::Vector2u windowMaxSize = mainWindow->getSize();
+    sf::Vector2f windowMaxSize = mainWindow->getDefaultView().getSize();
     if (appleExist == false)
     {
         currApple =  AppleMaker::createApple(minFieldPos,maxFieldPos);
@@ -294,7 +294,7 @@ void GameSuperviser::restartGame()
 
 void GameSuperviser::createBorderField()
 {
-    sf::Vector2u windowSize = mainWindow->getSize();
+    sf::Vector2f windowSize = mainWindow->getDefaultView().getSize();
     sf::Vector2f topBorderSize = sf::Vector2f(windowSize.x-borderMargin*2,borderSize);
     sf::RectangleShape borderTop = sf::RectangleShape(topBorderSize);
     borderTop.setPosition(borderMargin,borderMargin);  

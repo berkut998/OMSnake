@@ -174,10 +174,7 @@ private:
         if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && visible)
         {
             sf::Vector2i mousePosition = sf::Mouse::getPosition(*window);
-            sf::Vector2f mousePositionFloat = sf::Vector2f{mousePosition.x,mousePosition.y};
-            sf::FloatRect glob = btnShape.getGlobalBounds();
-            sf::Vector2f btnPos = btnShape.getPosition();
-            sf::FloatRect local = btnShape.getLocalBounds();
+            sf::Vector2f mousePositionFloat = window->mapPixelToCoords(mousePosition);
             if (btnShape.getGlobalBounds().contains(mousePositionFloat))
                 click();
         }
