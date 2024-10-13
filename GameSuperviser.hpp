@@ -4,6 +4,7 @@
 #include "IGameObject.hpp"
 #include "Button.hpp"
 
+#include <random>
 #include <iostream>
 
 class GameSuperviser
@@ -25,7 +26,10 @@ private:
     bool gameRestarted = false;
     const int borderMargin = 50;
     const int borderSize = 5;
+    sf::Vector2f minFieldPos;
+    sf::Vector2f maxFieldPos;
 
+    void calculateMinMaxFieldPos();
     bool checkIfAppleCanBeAte();
     void clearAllGameObjects ();
     void createAppleIfNotExist();
@@ -52,6 +56,16 @@ public:
 GameSuperviser::GameSuperviser(sf::RenderWindow *window)
 {
     mainWindow = window;
+    calculateMinMaxFieldPos();
+}
+
+void GameSuperviser::calculateMinMaxFieldPos()
+{
+    sf::Vector2u windowSize = mainWindow->getSize();
+    windowSize.x-borderMargin*2-borderSize;
+    maxFieldPos = sf::Vector2f(windowSize.x-borderMargin*2-borderSize,
+    windowSize.y-borderMargin*2-borderSize);
+    minFieldPos = sf::Vector2f(borderMargin+borderSize,borderMargin+borderSize);
 }
 
 GameSuperviser::~GameSuperviser()
@@ -83,11 +97,17 @@ void GameSuperviser::setUpTextVariable()
     }
     else
     {
+
         textScore.setFont(*font);
-        textScore.setCharacterSize(14);
+        textScore.setCharacterSize(24);
         textScore.setFillColor(sf::Color::White);
-        textScore.setStyle(sf::Text::Bold | sf::Text::Underlined);
-        textScore.setPosition(0, 0);
+        textScore.setStyle(sf::Text::Bold);
+       
+        sf::Vector2u windowSize =  mainWindow->getSize();
+        float textWidth = textScore.getLocalBounds().width;
+        float textHeight = textScore.getLocalBounds().height;
+        sf::Vector2f scoreTextPos = sf::Vector2f(windowSize.x/2-textWidth/2,10);
+        textScore.setPosition(scoreTextPos);
 
         textGameOver.setFont(*font);
         textGameOver.setString("Game over");
@@ -96,19 +116,34 @@ void GameSuperviser::setUpTextVariable()
         textGameOver.setStyle(sf::Text::Bold);
     }
 }
+
 void GameSuperviser::startGame()
 {
     setUpTextVariable();
     createBorderField();
-    snake = new Snake();
+
+    std::random_device r;
+    std::default_random_engine e1(r());
+    std::uniform_int_distribution<int> uniform_distX(minFieldPos.x, maxFieldPos.x);
+    int randomX = uniform_distX(e1);
+    std::uniform_int_distribution<int> uniform_distY( minFieldPos.y,maxFieldPos.y);
+    int randomY = uniform_distY(e1);
+
+    sf::Vector2f snakePos = sf::Vector2f(randomX,randomY);
+    snake = new Snake(snakePos);
     snake->id=idCounter;
     idCounter++;
     allGameObjects.push_back(snake);
 }
 
+
+
 void GameSuperviser::drawAllGameObjects()
 {
-   
+
+    drawScore();
+    for (const auto &border : borders)
+        mainWindow->draw(border);
     if (checkTailCanBeAte()|| checkWallCollision())
     {
         drawGameOverScreen();
@@ -119,9 +154,6 @@ void GameSuperviser::drawAllGameObjects()
     createAppleIfNotExist();
     for (const auto &currObject : allGameObjects)
         currObject->draw(mainWindow);
-    drawScore();
-    for (const auto &border : borders)
-        mainWindow->draw(border);
 }
 
 void GameSuperviser::drawGameOverScreen()
@@ -146,10 +178,10 @@ bool GameSuperviser::checkTailCanBeAte()
 {
     sf::FloatRect headBound = snake->getObjectBond();
     std::vector<Snake::SnakeBody> tail = snake->getTail();
-    if (tail.size() > 1)
+    if (tail.size() > 6)
     {
         size_t tailSize = tail.size();
-        for (size_t i = 1; i < tailSize; i++)
+        for (size_t i = 6; i < tailSize; i++)
         {
             sf::FloatRect tailBouds = tail[i].shape.getGlobalBounds();
             if (headBound.intersects(tailBouds))
@@ -191,7 +223,6 @@ void GameSuperviser::eatApple()
         if (allGameObjects[i]->id == currApple->id)
         {
             score++;
-            std::cout << "Score:"<<score <<std::endl;
             allGameObjects.erase(allGameObjects.begin() + i);
             delete currApple;
             currApple = nullptr;
@@ -206,7 +237,7 @@ void GameSuperviser::createAppleIfNotExist()
     sf::Vector2u windowMaxSize = mainWindow->getSize();
     if (appleExist == false)
     {
-        currApple =  AppleMaker::createApple(windowMaxSize.x,windowMaxSize.y);
+        currApple =  AppleMaker::createApple(minFieldPos,maxFieldPos);
         currApple->id = idCounter;
         idCounter++;
         allGameObjects.push_back(currApple);

@@ -52,13 +52,13 @@ void Control::move()
 
 void Control::changeMovement(sf::Event *event)
 {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && currMoveTo != Movement::Right)
         currMoveTo = Movement::Left;
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && currMoveTo != Movement::Left)
         currMoveTo = Movement::Right;
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && currMoveTo != Movement::Down)
         currMoveTo = Movement::Up;
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && currMoveTo != Movement::Up)
         currMoveTo = Movement::Down;
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
         currMoveTo = Movement::None;

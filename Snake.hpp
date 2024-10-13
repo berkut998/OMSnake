@@ -16,7 +16,7 @@ public:
     std::vector<SnakeBody> getTail();
     sf::FloatRect getObjectBond();
     void grow();
-    Snake();
+    Snake(sf::Vector2f startPostion );
     ~Snake();
 
 private:
@@ -28,12 +28,13 @@ private:
     void moveTailToHead();
 };
 
-    Snake::Snake()
+    Snake::Snake(sf::Vector2f startPostion )
     {
         head = SnakeBody();
         head.shape = sf::RectangleShape(snakeSize);
         head.shape.setFillColor(sf::Color(255,255,255,255));
         control = new Control(&head.shape);
+        head.shape.setPosition(startPostion);
     }
 
     Snake::~Snake()
