@@ -26,8 +26,23 @@ include_directories(${SFML_INCLUDE})
 
 IF (LINUX)
 # static lib SFML LINUX
-set (SFML_LIB_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Dependency/SFML-2.6.1/lib/")
+set (SFML_LIB_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Dependency/SFML-2.6.1/Linux/lib")
     #release dll
+    
+    # IF (CMAKE_BUILD_TYPE STREQUAL "Release")
+    #     set (SFML_ALL_LIB "${SFML_LIB_PATH}/libsfml-window-s.a" 
+    #     "${SFML_LIB_PATH}/libsfml-system-s.a"
+    #     "${SFML_LIB_PATH}/libsfml-graphics-s.a"
+    #     "${SFML_LIB_PATH}/libsfml-audio-s.a")
+    # ENDIF()
+    # #debug dll
+    # IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    #     set (SFML_ALL_LIB "${SFML_LIB_PATH}/libsfml-window-s-d.a" 
+    #     "${SFML_LIB_PATH}/libsfml-system-s-d.a"
+    #     "${SFML_LIB_PATH}/libsfml-graphics-s-d.a"
+    #     "${SFML_LIB_PATH}/libsfml-audio-s-d.a")
+    # ENDIF()
+
     IF (CMAKE_BUILD_TYPE STREQUAL "Release")
         set (SFML_ALL_LIB "${SFML_LIB_PATH}/libsfml-window.so" 
         "${SFML_LIB_PATH}/libsfml-system.so"
@@ -56,7 +71,7 @@ IF (WIN32)
         "${SFML_LIB_PATH}/sfml-audio-d.lib"
         "${SFML_LIB_PATH}/vorbis.lib"
         "${SFML_LIB_PATH}/openal32.lib"
-        "${SFML_LIB_PATH}/ogg.lib"
+        "${SFML_LIB_PATH}/ogg.lib" 
         "${SFML_LIB_PATH}/freetype.lib"
         "${SFML_LIB_PATH}/flac.lib"
         "${SFML_LIB_PATH}/vorbisenc.lib"
@@ -120,9 +135,11 @@ ELSEIF(CMAKE_BUILD_TYPE STREQUAL "Release")
 ENDIF()
 
 message(SFML_ALL_LIB==${SFML_ALL_LIB})
+#link and compile
 target_link_libraries(Snake PRIVATE ${SFML_ALL_LIB})
 target_compile_features(Snake PRIVATE cxx_std_20)
 
+#dll copy
 message(AllDLL = ${SFML_ALL_DLL})
 FOREACH( DLL  ${SFML_ALL_DLL})
     message("Copy ${SFML_LIB_PATH}${DLL}  to ${CMAKE_CURRENT_BINARY_DIR}${DLL}" ) 
