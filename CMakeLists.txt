@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5.0)
+cmake_minimum_required(VERSION 3.20.0)
 project(Snake VERSION 0.1.0 LANGUAGES C CXX)
 
 #build type
@@ -13,9 +13,6 @@ endif()
 # Release-specific options
 #set(RELEASE_OPTIONS "-O3")
 
-
-
-
 IF(UNIX AND NOT APPLE)
     set(LINUX TRUE)
 ENDIF()
@@ -25,37 +22,37 @@ set(SFML_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/Dependency/SFML-2.6.1/include/SFML
 include_directories(${SFML_INCLUDE})
 
 IF (LINUX)
-# static lib SFML LINUX
-set (SFML_LIB_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Dependency/SFML-2.6.1/Linux/lib")
-    #release dll
-    
-    # IF (CMAKE_BUILD_TYPE STREQUAL "Release")
-    #     set (SFML_ALL_LIB "${SFML_LIB_PATH}/libsfml-window-s.a" 
-    #     "${SFML_LIB_PATH}/libsfml-system-s.a"
-    #     "${SFML_LIB_PATH}/libsfml-graphics-s.a"
-    #     "${SFML_LIB_PATH}/libsfml-audio-s.a")
-    # ENDIF()
-    # #debug dll
-    # IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    #     set (SFML_ALL_LIB "${SFML_LIB_PATH}/libsfml-window-s-d.a" 
-    #     "${SFML_LIB_PATH}/libsfml-system-s-d.a"
-    #     "${SFML_LIB_PATH}/libsfml-graphics-s-d.a"
-    #     "${SFML_LIB_PATH}/libsfml-audio-s-d.a")
-    # ENDIF()
-
+#   lib SFML LINUX
+    set (SFML_LIB_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Dependency/SFML-2.6.1/Linux/lib")   
+    #release lib
     IF (CMAKE_BUILD_TYPE STREQUAL "Release")
-        set (SFML_ALL_LIB "${SFML_LIB_PATH}/libsfml-window.so" 
-        "${SFML_LIB_PATH}/libsfml-system.so"
-        "${SFML_LIB_PATH}/libsfml-graphics.so"
-        "${SFML_LIB_PATH}/libsfml-audio.so")
+        set (SFML_ALL_LIB "${SFML_LIB_PATH}/libsfml-window.so.2.6.1" 
+        "${SFML_LIB_PATH}/libsfml-system.so.2.6.1"
+        "${SFML_LIB_PATH}/libsfml-graphics.so.2.6.1"
+        "${SFML_LIB_PATH}/libsfml-audio.so.2.6.1"
+
+        "${SFML_LIB_PATH}/libsfml-window.so.2.6" 
+        "${SFML_LIB_PATH}/libsfml-system.so.2.6"
+        "${SFML_LIB_PATH}/libsfml-graphics.so.2.6"
+        "${SFML_LIB_PATH}/libsfml-audio.so.2.6")
+        set(SFML_DEPENDENCY ${SFML_ALL_LIB})
     ENDIF()
-    #debug dll
+    #debug lib
     IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set (SFML_ALL_LIB "${SFML_LIB_PATH}/libsfml-window-d.so" 
-        "${SFML_LIB_PATH}/libsfml-system-d.so"
-        "${SFML_LIB_PATH}/libsfml-graphics-d.so"
-        "${SFML_LIB_PATH}/libsfml-audio-d.so")
+        set (SFML_ALL_LIB "${SFML_LIB_PATH}/libsfml-window-d.so.2.6.1"
+        "${SFML_LIB_PATH}/libsfml-system-d.so.2.6.1"
+        "${SFML_LIB_PATH}/libsfml-graphics-d.so.2.6.1"
+        "${SFML_LIB_PATH}/libsfml-audio-d.so.2.6.1"
+        
+        "${SFML_LIB_PATH}/libsfml-window-d.so.2.6"
+        "${SFML_LIB_PATH}/libsfml-system-d.so.2.6"
+        "${SFML_LIB_PATH}/libsfml-graphics-d.so.2.6"
+        "${SFML_LIB_PATH}/libsfml-audio-d.so.2.6")
+        set(SFML_DEPENDENCY ${SFML_ALL_LIB})
     ENDIF()
+
+    set(CMAKE_INSTALL_RPATH ".")
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH true)
 ENDIF()
 
 #windows lib
@@ -117,14 +114,6 @@ IF (WIN32)
 
 ENDIF()
 
-
-#debug lib .a not working?
-# IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
-#     set (SFML_ALL_LIB "${SFML_LIB_PATH}/libsfml-window-s-d.a" 
-#     "${SFML_LIB_PATH}/libsfml-system-s-d.a"
-#     "${SFML_LIB_PATH}/libsfml-graphics-s-d.a"
-#     "${SFML_LIB_PATH}/libsfml-audio-s-d.a")
-# ENDIF()
 add_executable(Snake main.cpp)
 
 # compiler flags based on the build type
@@ -134,7 +123,6 @@ ELSEIF(CMAKE_BUILD_TYPE STREQUAL "Release")
     target_compile_options(Snake PRIVATE ${RELEASE_OPTIONS})
 ENDIF()
 
-message(SFML_ALL_LIB==${SFML_ALL_LIB})
 #link and compile
 target_link_libraries(Snake PRIVATE ${SFML_ALL_LIB})
 target_compile_features(Snake PRIVATE cxx_std_20)
@@ -142,19 +130,40 @@ target_compile_features(Snake PRIVATE cxx_std_20)
 #dll copy
 message(AllDLL = ${SFML_ALL_DLL})
 FOREACH( DLL  ${SFML_ALL_DLL})
-    message("Copy ${SFML_LIB_PATH}${DLL}  to ${CMAKE_CURRENT_BINARY_DIR}${DLL}" ) 
-    add_custom_command(
-        TARGET Snake POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-            ${SFML_LIB_PATH}${DLL}
-            ${CMAKE_CURRENT_BINARY_DIR}${DLL}
-  )
+     add_custom_command(
+        TARGET Snake PRE_BUILD
+         COMMAND ${CMAKE_COMMAND} -E copy 
+         "${SFML_LIB_PATH}${DLL}" 
+         "$<TARGET_FILE_DIR:Snake>${DLL}"
+   )
+
 ENDFOREACH()
 
 #Font copy
 set(FontPath "Font/ArialCE.ttf" )
 add_custom_command(
-    TARGET Snake POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/${FontPath}"
-    "${CMAKE_CURRENT_BINARY_DIR}/${FontPath}"
-    COMMENT "copy font")
+    TARGET Snake PRE_BUILD
+     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/${FontPath}" 
+     "$<TARGET_FILE_DIR:Snake>/${FontPath}"
+)
+
+#install
+set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation Directory" FORCE)
+install(FILES ${SFML_DEPENDENCY}   DESTINATION bin)
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/${FontPath}"  DESTINATION bin/Font)
+install(TARGETS Snake DESTINATION bin CONFIGURATIONS Release)
+install(FILES $<TARGET_RUNTIME_DLLS:Snake> DESTINATION bin)
+ 
+
+#CPack zip
+set(CPACK_GENERATOR "ZIP")
+set(CPACK_PACKAGE_NAME "OMSnake")
+set(CPACK_PACKAGE_VENDOR "Lol.org")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "OMSNake - game snake")
+set(CPACK_PACKAGE_VERSION "1.0.0")
+set(CPACK_PACKAGE_VERSION_MAJOR "1")
+set(CPACK_PACKAGE_VERSION_MINOR "0")
+set(CPACK_PACKAGE_VERSION_PATCH "0")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "CPack Component Example")
+SET(CPACK_NSIS_MODIFY_PATH ON)
+INCLUDE(CPack)
