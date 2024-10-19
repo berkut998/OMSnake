@@ -1,6 +1,6 @@
 # OMSnake
 
-Simple game snake.
+Simple game snake. (I was just bored and decided to make one more game "snake")
 
 For control use arrow (&uarr;&rarr;&darr;&larr;)
 
