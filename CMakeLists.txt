@@ -111,6 +111,12 @@ IF (WIN32)
         "/openal32.dll")
     ENDIF()
 
+    #stupid fix
+    set(SFML_DEPENDENCY "${SFML_LIB_PATH}/sfml-window-2.dll"
+    "${SFML_LIB_PATH}/sfml-window-2.dll"
+    "${SFML_LIB_PATH}/sfml-system-2.dll"
+    "${SFML_LIB_PATH}/sfml-graphics-2.dll")
+
 
 ENDIF()
 
@@ -128,7 +134,6 @@ target_link_libraries(Snake PRIVATE ${SFML_ALL_LIB})
 target_compile_features(Snake PRIVATE cxx_std_20)
 
 #dll copy
-message(AllDLL = ${SFML_ALL_DLL})
 FOREACH( DLL  ${SFML_ALL_DLL})
      add_custom_command(
         TARGET Snake PRE_BUILD
@@ -151,8 +156,8 @@ add_custom_command(
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation Directory" FORCE)
 install(FILES ${SFML_DEPENDENCY}   DESTINATION bin)
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/${FontPath}"  DESTINATION bin/Font)
-install(TARGETS Snake DESTINATION bin CONFIGURATIONS Release)
-install(FILES $<TARGET_RUNTIME_DLLS:Snake> DESTINATION bin)
+install(TARGETS Snake RUNTIME DESTINATION bin)
+install(FILES "$<TARGET_RUNTIME_DLLS:Snake>" DESTINATION bin)
  
 
 #CPack zip
